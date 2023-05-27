@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'recipe.dart';
 import 'package:http/http.dart' as http;
+import 'package:wakelock/wakelock.dart';
 import 'dart:convert';
 import 'recipe_page.dart';
 import 'main.dart';
@@ -20,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   Future<void> _addRecipe(String title) async {
+    Wakelock.enable();
     setState(() {
       _isLoading = true;
     });
@@ -37,6 +39,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isLoading = false;
     });
+
+    Wakelock.disable();
 
     if (response.statusCode == 200) {
       setState(() {
