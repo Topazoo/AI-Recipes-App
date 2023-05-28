@@ -3,12 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:wakelock/wakelock.dart';
 import 'dart:convert';
 
+import '../../models/recipe.dart';
+import '../../main.dart';
+
 import 'components/add_recipe_dialogue.dart';
 import 'components/loading_spinner.dart';
 import 'components/recipe_list.dart';
-
-import '../../models/recipe.dart';
-import '../../main.dart';
 
 class RecipeListPage extends StatefulWidget {
   const RecipeListPage({Key? key, required this.title}) : super(key: key);
@@ -24,7 +24,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
   final Map<String, Recipe> _recipes = {};
 
   Future<void> _addRecipe(String title) async {
-    Wakelock.enable();
+    Wakelock.enable(); // TODO - Change to background task
+
     setState(() {
       _isLoading = true;
     });
@@ -51,7 +52,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
         _recipes[recipe.title] = recipe;
       });
     } else {
-      throw Exception('Failed to load recipe');
+      throw Exception('Failed to load recipe'); // TODO - Show alert when failure
     }
   }
 
