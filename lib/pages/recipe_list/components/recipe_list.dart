@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/recipe.dart';
 
-import '../../recipe_page.dart';
+import '../../recipe_detail_page/page.dart';
 
 class RecipeList extends StatelessWidget {
   final List<Recipe> recipes;
@@ -20,7 +20,7 @@ class RecipeList extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RecipePage(recipe: recipes[index]),
+                builder: (context) => RecipeDetailPage(recipe: recipes[index]),
               ),
             );
           },
