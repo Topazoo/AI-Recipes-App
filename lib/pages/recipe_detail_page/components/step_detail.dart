@@ -9,7 +9,7 @@ class StepDetail extends StatelessWidget {
   final RecipeStep step;
   final ValueChanged<bool?> onChanged;
 
-  StepDetail({required this.step, required this.isChecked, required this.onChanged});
+  const StepDetail({super.key, required this.step, required this.isChecked, required this.onChanged});
 
   int extractDuration(String instruction) {
     final RegExp regExp = RegExp(r'\bfor\b ([0-9]+(-[0-9]+)?) (seconds|minutes|hours|days|weeks|months|years)', caseSensitive: false);
@@ -73,7 +73,7 @@ class StepDetail extends StatelessWidget {
                   children: [
                     Text(
                       'Step ${step.stepNumber}:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(step.instruction),
                   ],

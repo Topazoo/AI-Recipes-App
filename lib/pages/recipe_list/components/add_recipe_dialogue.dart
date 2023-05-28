@@ -4,25 +4,25 @@ class AddRecipeDialog extends StatelessWidget {
   final TextEditingController textEditingController;
   final Function(String) onRecipeAdded;
 
-  AddRecipeDialog(this.textEditingController, this.onRecipeAdded);
+  const AddRecipeDialog(this.textEditingController, this.onRecipeAdded, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Add a Recipe'),
+      title: const Text('Add a Recipe'),
       content: TextField(
         controller: textEditingController,
-        decoration: InputDecoration(hintText: "Enter recipe name"),
+        decoration: const InputDecoration(hintText: "Enter recipe name"),
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('CANCEL'),
+          child: const Text('CANCEL'),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         TextButton(
-          child: Text('ADD'),
+          child: const Text('ADD'),
           onPressed: () {
             String recipeName = textEditingController.text;
             Navigator.pop(context);

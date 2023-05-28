@@ -12,10 +12,10 @@ class RecipeDetailPage extends StatefulWidget {
   const RecipeDetailPage({Key? key, required this.recipe}) : super(key: key);
 
   @override
-  _RecipeDetailPageState createState() => _RecipeDetailPageState();
+  RecipeDetailPageState createState() => RecipeDetailPageState();
 }
 
-class _RecipeDetailPageState extends State<RecipeDetailPage> {
+class RecipeDetailPageState extends State<RecipeDetailPage> {
   List<bool> _stepChecklist = [];
   List<bool> _ingredientChecklist = [];
 
@@ -36,7 +36,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            SectionTitle('Description:'),
+            const SectionTitle('Description:'),
             Text(widget.recipe.description),
             const Divider(),
             Text('Servings: ${widget.recipe.servings}'),
@@ -45,10 +45,10 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
             const Divider(),
             Text('Cooking time: ${widget.recipe.cookTime}'),
             const Divider(),
-            SectionTitle('Notes:'),
+            const SectionTitle('Notes:'),
             Text(widget.recipe.notes),
             const Divider(),
-            SectionTitle('Ingredients:'),
+            const SectionTitle('Ingredients:'),
             for (int i = 0; i < widget.recipe.ingredients.length; i++)
               IngredientDetail(
                 ingredient: widget.recipe.ingredients[i], 
@@ -60,7 +60,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 },
               ),
             const Divider(),
-            SectionTitle('Steps:'),
+            const SectionTitle('Steps:'),
             for (int i = 0; i < widget.recipe.steps.length; i++)
               StepDetail(
                 step: widget.recipe.steps[i],

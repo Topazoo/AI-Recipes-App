@@ -21,7 +21,7 @@ class RecipeListPage extends StatefulWidget {
 
 class _RecipeListPageState extends State<RecipeListPage> {
   bool _isLoading = false;
-  Map<String, Recipe> _recipes = {};
+  final Map<String, Recipe> _recipes = {};
 
   Future<void> _addRecipe(String title) async {
     Wakelock.enable();
@@ -71,7 +71,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: _isLoading ? LoadingSpinner() : RecipeList(_recipes.values.toList()),
+      body: _isLoading ? const LoadingSpinner() : RecipeList(_recipes.values.toList()),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showAddRecipeDialog(context);

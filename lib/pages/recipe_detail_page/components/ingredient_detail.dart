@@ -7,7 +7,7 @@ class IngredientDetail extends StatelessWidget {
   final Ingredient ingredient;
   final ValueChanged<bool?> onChanged;
 
-  IngredientDetail({required this.ingredient, required this.isChecked, required this.onChanged});
+  const IngredientDetail({super.key, required this.ingredient, required this.isChecked, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {

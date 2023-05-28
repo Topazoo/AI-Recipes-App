@@ -7,7 +7,7 @@ import '../../recipe_detail_page/page.dart';
 class RecipeList extends StatelessWidget {
   final List<Recipe> recipes;
   
-  RecipeList(this.recipes);
+  const RecipeList(this.recipes, {super.key});
 
   @override
   Widget build(BuildContext context) {
