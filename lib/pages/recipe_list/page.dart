@@ -1,14 +1,12 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '../../utilities/recipe_http_client.dart';
 
 import '../../models/recipe.dart';
-import '../../main.dart';
+import '../../models/loading_recipe.dart';
 
 import 'components/add_recipe_dialogue.dart';
-import '../../models/loading_recipe.dart';
 import 'components/loading_recipe_list.dart';
 import 'components/recipe_list.dart';
 
@@ -40,6 +38,8 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
   }
 
   Future<void> _addRecipe(String title) async {
+    RecipeHTTPClient httpClient = RecipeHTTPClient(recipeTitle: title);
+
     LoadingRecipe recipe = _loadingRecipes.firstWhere((r) => r.title == title, orElse: () => LoadingRecipe(title: title, startTime: DateTime.now()));
     recipe.status = LoadingStatus.loading;
 
@@ -49,36 +49,10 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
       _loadingRecipes.add(recipe);
     });
 
-    // Helper function to check if recipe exists
-    Future<bool> recipeExists() async {
-      final response = await http.get(
-        Uri.parse('${env['CONJURE_API_URL']}/recipes/exists?recipe=$title'),
-        headers: {
-          'accept': 'application/json',
-          'CONJURE-API-APPLICATION-ID': env['CONJURE_API_APPLICATION_ID'] ?? '',
-          'CONJURE-API-ACCESS-TOKEN': env['CONJURE_API_ACCESS_TOKEN'] ?? '',
-        },
-      );
-      return response.statusCode == 200;
-    }
-
-    // Helper function to fetch recipe
-    Future<Recipe?> fetchRecipe() async {
-      final response = await http.get(
-        Uri.parse('${env['CONJURE_API_URL']}/recipes?recipe=$title'),
-        headers: {
-          'accept': 'application/json',
-          'CONJURE-API-APPLICATION-ID': env['CONJURE_API_APPLICATION_ID'] ?? '',
-          'CONJURE-API-ACCESS-TOKEN': env['CONJURE_API_ACCESS_TOKEN'] ?? '',
-        },
-      );
-      return response.statusCode == 200 ? Recipe.fromJson(jsonDecode(response.body)) : null;
-    }
-
     // Try fetching the recipe immediately
-    fetchRecipe();
-    if (await recipeExists()) {
-      final recipe = await fetchRecipe();
+    httpClient.fetchRecipe();
+    if (await httpClient.recipeExists()) {
+      final recipe = await httpClient.fetchRecipe();
       if (recipe != null) {
         setState(() {
           _loadingRecipes.removeWhere((r) => r.title == title);
@@ -91,8 +65,8 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
     // Retry every 20 seconds for up to 5 minutes
     for (int i = 0; i < 15; i++) {
       await Future.delayed(Duration(seconds: 20));
-      if (await recipeExists()) {
-        final recipe = await fetchRecipe();
+      if (await httpClient.recipeExists()) {
+        final recipe = await httpClient.fetchRecipe();
         if (recipe != null) {
           setState(() {
             _loadingRecipes.removeWhere((r) => r.title == title);
