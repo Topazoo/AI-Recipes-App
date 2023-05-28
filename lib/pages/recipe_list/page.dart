@@ -63,8 +63,10 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
     }
 
     // Retry every 20 seconds for up to 5 minutes
-    for (int i = 0; i < 15; i++) {
-      await Future.delayed(Duration(seconds: 20));
+    int totalSeconds = 300;
+    int delaySeconds = 20; 
+    for (int i = 0; i < totalSeconds/delaySeconds; i++) {
+      await Future.delayed(Duration(seconds: delaySeconds));
       if (await httpClient.recipeExists()) {
         final recipe = await httpClient.fetchRecipe();
         if (recipe != null) {
@@ -101,7 +103,7 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
         title: Text(widget.title),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(icon: Icon(Icons.check_box), text: 'Recipes'),
             Tab(icon: Icon(Icons.hourglass_empty), text: 'Loading Recipes'),
           ],

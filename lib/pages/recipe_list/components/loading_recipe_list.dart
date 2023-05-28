@@ -6,7 +6,7 @@ class LoadingRecipeList extends StatelessWidget {
   final List<LoadingRecipe> loadingRecipes;
   final Function(String) retryLoadingRecipe;
   
-  LoadingRecipeList(this.loadingRecipes, {Key? key, required this.retryLoadingRecipe}) : super(key: key);
+  const LoadingRecipeList(this.loadingRecipes, {Key? key, required this.retryLoadingRecipe}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,8 @@ class LoadingRecipeList extends StatelessWidget {
         return ListTile(
           title: Text(loadingRecipe.title),
           subtitle: loadingRecipe.status == LoadingStatus.loading
-              ? Text('Loading... (this can take up to 5 minutes)')
-              : Text('Failed to load (tap to retry)'),
+              ? const Text('Loading... (this can take up to 5 minutes)')
+              : const Text('Failed to load (tap to retry)'),
                           onTap: loadingRecipe.status == LoadingStatus.failure
                   ? () {
                       // Retry loading the recipe.
