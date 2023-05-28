@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:wakelock/wakelock.dart';
 import 'dart:convert';
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../models/recipe.dart';
 import '../../main.dart';
@@ -21,18 +23,36 @@ class RecipeListPage extends StatefulWidget {
 
 class _RecipeListPageState extends State<RecipeListPage> {
   bool _isLoading = false;
-  final Map<String, Recipe> _recipes = {};
+  final _store = stringMapStoreFactory.store('recipes');
+  Database? _database;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeDatabase();
+  }
+
+  Future<void> _initializeDatabase() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final dbPath = directory.path + 'recipes.db';
+    _database = await databaseFactoryIo.openDatabase(dbPath);
+  }
+
+  Future<List<Recipe>> _fetchRecipes() async {
+    final records = await _store.find(_database!);
+    return records.map((snapshot) {
+      var recipe = Recipe.fromJson(snapshot.value);
+      return recipe;
+    }).toList();
+  }
 
   Future<void> _addRecipe(String title) async {
-    Wakelock.enable(); // TODO - Change to background task
-
     setState(() {
       _isLoading = true;
     });
 
     final response = await http.get(
-      Uri.parse(
-          '${env['CONJURE_API_URL']}/recipes?recipe=$title'),
+      Uri.parse('${env['CONJURE_API_URL']}/recipes?recipe=$title'),
       headers: {
         'accept': 'application/json',
         'CONJURE-API-APPLICATION-ID': env['CONJURE_API_APPLICATION_ID'] ?? '',
@@ -40,20 +60,17 @@ class _RecipeListPageState extends State<RecipeListPage> {
       },
     );
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    Wakelock.disable();
-
     if (response.statusCode == 200) {
-      setState(() {
-        var recipe = Recipe.fromJson(jsonDecode(response.body));
-        _recipes[recipe.title] = recipe;
-      });
+      var body = jsonDecode(response.body);
+      var recipe = Recipe.fromJson(body);
+      await _store.record(recipe.title).put(_database!, body);
     } else {
       throw Exception('Failed to load recipe'); // TODO - Show alert when failure
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _showAddRecipeDialog(BuildContext context) {
@@ -72,7 +89,26 @@ class _RecipeListPageState extends State<RecipeListPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: _isLoading ? const LoadingSpinner() : RecipeList(_recipes.values.toList()),
+      body: _isLoading
+          ? const LoadingSpinner()
+          : FutureBuilder(
+              future: _database == null ? null : _store.find(_database!),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<RecordSnapshot<String, Map<String, dynamic>>>>
+                      snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  var recipes = snapshot.data!.map((snapshot) {
+                    var recipe = Recipe.fromJson(snapshot.value);
+                    return recipe;
+                  }).toList();
+                  return RecipeList(recipes);
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showAddRecipeDialog(context);
