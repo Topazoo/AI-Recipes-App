@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../../models/recipe.dart';
 import '../../main.dart';
@@ -51,6 +52,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
       _isLoading = true;
     });
 
+    Wakelock.enable();
+
     final response = await http.get(
       Uri.parse('${env['CONJURE_API_URL']}/recipes?recipe=$title'),
       headers: {
@@ -59,6 +62,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
         'CONJURE-API-ACCESS-TOKEN': env['CONJURE_API_ACCESS_TOKEN'] ?? '',
       },
     );
+
+    Wakelock.disable();
 
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
