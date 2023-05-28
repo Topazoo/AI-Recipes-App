@@ -11,7 +11,7 @@ class LoadingSpinner extends StatelessWidget {
         children: <Widget>[
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text("Generating new recipe - this can take up to 2 minutes!"),
+          Text("Generating new recipe - this can take up to 4 minutes!"),
         ],
       ),
     );

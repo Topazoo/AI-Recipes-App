@@ -35,16 +35,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
 
   Future<void> _initializeDatabase() async {
     final directory = await getApplicationDocumentsDirectory();
-    final dbPath = directory.path + 'recipes.db';
+    final dbPath = '${directory.path}recipes.db';
     _database = await databaseFactoryIo.openDatabase(dbPath);
-  }
-
-  Future<List<Recipe>> _fetchRecipes() async {
-    final records = await _store.find(_database!);
-    return records.map((snapshot) {
-      var recipe = Recipe.fromJson(snapshot.value);
-      return recipe;
-    }).toList();
   }
 
   Future<void> _addRecipe(String title) async {
