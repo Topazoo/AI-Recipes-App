@@ -49,6 +49,9 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
       _loadingRecipes.add(recipe);
     });
 
+    // Switch to the "Loading" tab
+    _tabController.animateTo(1);
+
     // Try fetching the recipe immediately
     httpClient.fetchRecipe();
     if (await httpClient.recipeExists()) {
@@ -58,6 +61,9 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
           _loadingRecipes.removeWhere((r) => r.title == title);
           _recipes[recipe.title] = recipe;
         });
+
+        // Switch to the "Recipes" tab
+        _tabController.animateTo(0);
       }
       return;
     }
@@ -74,6 +80,9 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
             _loadingRecipes.removeWhere((r) => r.title == title);
             _recipes[recipe.title] = recipe;
           });
+          
+          // Switch to the "Recipes" tab
+          _tabController.animateTo(0);
         }
         return;
       }
