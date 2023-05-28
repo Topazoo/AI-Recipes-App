@@ -1,8 +1,9 @@
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter/material.dart';
-import 'recipe.dart';
 import 'dart:async';
-import 'timer.dart';
+
+import '../models/recipe.dart';
+import '../utilities/timer.dart';
 
 class RecipePage extends StatefulWidget {
   final Recipe recipe;
