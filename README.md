@@ -110,6 +110,8 @@ CONJURE_API_ACCESS_TOKEN=<Application Access Token>
 
 ## Building and Releasing
 
+Set up a ConjureAPI endpoint and configure the `.env` file with it like above
+
 Follow these official guides:
 - [Getting Started (Running Locally)](https://docs.flutter.dev/get-started/install)
 - [Building and Releasing](https://docs.flutter.dev/deployment/ios)
