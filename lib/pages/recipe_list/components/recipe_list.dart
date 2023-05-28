@@ -6,16 +6,18 @@ import '../../recipe_detail_page/page.dart';
 
 class RecipeList extends StatelessWidget {
   final List<Recipe> recipes;
-  
-  const RecipeList(this.recipes, {super.key});
+  final void Function(Recipe recipe) onToggleFavorite;
+
+  const RecipeList(this.recipes, this.onToggleFavorite, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: recipes.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (BuildContext context, int index) {
+        final recipe = recipes[index];
         return ListTile(
-          title: Text(recipes[index].title),
+          title: Text(recipe.title),
           onTap: () {
             Navigator.push(
               context,
@@ -24,6 +26,12 @@ class RecipeList extends StatelessWidget {
               ),
             );
           },
+          // Here we add the favorite button
+          trailing: IconButton(
+            icon: Icon(recipe.isFavorite ? Icons.favorite : Icons.favorite_border),
+            onPressed: () => onToggleFavorite(recipe),
+            color: recipe.isFavorite ? Colors.red : null,
+          ),
         );
       },
     );

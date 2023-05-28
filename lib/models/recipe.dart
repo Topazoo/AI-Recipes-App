@@ -10,6 +10,7 @@ class Recipe {
   List<Ingredient> ingredients;
   List<RecipeStep> steps;
   String notes;
+  bool isFavorite;
 
   Recipe({
     required this.title,
@@ -20,6 +21,7 @@ class Recipe {
     required this.ingredients,
     required this.steps,
     required this.notes,
+    this.isFavorite = false, // default value
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
@@ -35,4 +37,10 @@ class Recipe {
       notes: json['notes'],
     );
   }
+
+  void toggleFavorite() {
+    isFavorite = !isFavorite;
+  }
+
+  String get sortableTitle => isFavorite ? 'A$title' : 'B$title';
 }
