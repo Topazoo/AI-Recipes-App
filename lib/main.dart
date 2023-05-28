@@ -6,5 +6,5 @@ final env = dotenv.env;
 
 void main() async {
   await dotenv.load();
-  runApp(const MyApp());
+  runApp(const App());
 }

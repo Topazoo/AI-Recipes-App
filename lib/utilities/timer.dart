@@ -4,13 +4,13 @@ import 'dart:async';
 class TimerWidget extends StatefulWidget {
   final int duration;
 
-  TimerWidget({required this.duration});
+  const TimerWidget({super.key, required this.duration});
 
   @override
-  _TimerWidgetState createState() => _TimerWidgetState();
+  TimerWidgetState createState() => TimerWidgetState();
 }
 
-class _TimerWidgetState extends State<TimerWidget> {
+class TimerWidgetState extends State<TimerWidget> {
   late Timer _timer;
   late int _timeRemaining;
 
@@ -21,7 +21,7 @@ class _TimerWidgetState extends State<TimerWidget> {
   }
 
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timeRemaining < 1) {
         timer.cancel();
       } else {
@@ -55,19 +55,19 @@ class _TimerWidgetState extends State<TimerWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          '${twoDigits(duration.inHours)}:${twoDigitMinutes}:${twoDigitSeconds}',
-          style: TextStyle(fontSize: 20),
+          '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds',
+          style: const TextStyle(fontSize: 20),
         ),
         IconButton(
-          icon: Icon(Icons.play_arrow),
+          icon: const Icon(Icons.play_arrow),
           onPressed: startTimer,
         ),
         IconButton(
-          icon: Icon(Icons.stop),
+          icon: const Icon(Icons.stop),
           onPressed: stopTimer,
         ),
         IconButton(
-          icon: Icon(Icons.refresh),
+          icon: const Icon(Icons.refresh),
           onPressed: resetTimer,
         ),
       ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'pages/recipe_list/page.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Recipe App'),
+      home: const RecipeListPage(title: 'Recipe App'),
     );
   }
 }
