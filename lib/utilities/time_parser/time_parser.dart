@@ -2,7 +2,7 @@ import 'constants.dart';
 
 class TimeParser {
     static int extractDuration(String instruction) {
-        final match = Constants.TIME_INTERVAL_REGEX.firstMatch(instruction);
+        final match = RegExp(Constants.TIME_INTERVAL_REGEX, caseSensitive: false).firstMatch(instruction);
         if (match != null && match.groupCount > 1) {
             String unit = match.group(4)!;
             int duration = 0;
