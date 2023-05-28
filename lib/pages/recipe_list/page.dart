@@ -34,6 +34,11 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _searchController.addListener(() {
+      setState(() {
+        _searchTerm = _searchController.text;
+      });
+    });
   }
 
   @override
@@ -153,21 +158,35 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
             Tab(icon: Icon(Icons.hourglass_empty), text: 'Loading Recipes'),
           ],
         ),
-        // New search bar
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () {},
-              child: Icon(Icons.search),
-            )
-          ),
-        ],
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          RecipeList(_recipes.values.toList(), _toggleFavorite),
+          Column(children: [
+            GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus(); // Unfocus the search field
+                setState(() {
+                  _searchTerm = _searchController.text;
+                });
+              },
+              child: TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  labelText: "Search",
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
+              ),
+            ),
+            Flexible(child:
+              RecipeList(_searchTerm == "" ? 
+                _recipes.values.toList() : 
+                _recipes.values.where((recipe) => recipe.title.toLowerCase().contains(_searchTerm.toLowerCase())).toList(),
+                _toggleFavorite
+              )
+            ),
+          ]),
           LoadingRecipeList(_loadingRecipes, retryLoadingRecipe: _addRecipe),
         ],
       ),

@@ -8,7 +8,7 @@ class RecipeList extends StatelessWidget {
   final List<Recipe> recipes;
   final void Function(Recipe recipe) onToggleFavorite;
 
-  RecipeList(this.recipes, this.onToggleFavorite);
+  const RecipeList(this.recipes, this.onToggleFavorite, {super.key});
 
   @override
   Widget build(BuildContext context) {
