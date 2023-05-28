@@ -20,22 +20,56 @@ class RecipeListPage extends StatefulWidget {
 }
 
 class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProviderStateMixin {
-  final Map<String, Recipe> _recipes = {};
+  Map<String, Recipe> _recipes = {};
+  final Map<String, Recipe> _favoriteRecipes = {};
   final List<LoadingRecipe> _loadingRecipes = [];
 
   late TabController _tabController;
+
+  // Used for the search bar
+  final TextEditingController _searchController = TextEditingController();
+  String _searchTerm = "";
   
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
+
+  void _toggleFavorite(Recipe recipe) {
+      setState(() {
+          recipe.isFavorite = !recipe.isFavorite;
+          if (recipe.isFavorite) {
+              _favoriteRecipes[recipe.title] = recipe;
+          } else {
+              _favoriteRecipes.remove(recipe.title);
+          }
+      });
+      _sortRecipes();
+  }
+
+  void _sortRecipes() {
+      List<Recipe> sortedRecipes = _recipes.values.toList();
+      sortedRecipes.sort((a, b) {
+          if (a.isFavorite == b.isFavorite) {
+              return a.title.compareTo(b.title);
+          } else {
+              return a.isFavorite ? -1 : 1;
+          }
+      });
+      setState(() {
+          _recipes = sortedRecipes.asMap().map((index, value) => MapEntry(value.title, value));
+      });
+  }
+
+
 
   Future<void> _addRecipe(String title) async {
     RecipeHTTPClient httpClient = RecipeHTTPClient(recipeTitle: title);
@@ -58,9 +92,10 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
       final recipe = await httpClient.fetchRecipe();
       if (recipe != null) {
         setState(() {
-          _loadingRecipes.removeWhere((r) => r.title == title);
-          _recipes[recipe.title] = recipe;
+            _loadingRecipes.removeWhere((r) => r.title == title);
+            _recipes[recipe.title] = recipe;
         });
+        _sortRecipes();
 
         // Switch to the "Recipes" tab
         _tabController.animateTo(0);
@@ -77,10 +112,11 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
         final recipe = await httpClient.fetchRecipe();
         if (recipe != null) {
           setState(() {
-            _loadingRecipes.removeWhere((r) => r.title == title);
-            _recipes[recipe.title] = recipe;
+              _loadingRecipes.removeWhere((r) => r.title == title);
+              _recipes[recipe.title] = recipe;
           });
-          
+          _sortRecipes();
+
           // Switch to the "Recipes" tab
           _tabController.animateTo(0);
         }
@@ -117,11 +153,21 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
             Tab(icon: Icon(Icons.hourglass_empty), text: 'Loading Recipes'),
           ],
         ),
+        // New search bar
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: Icon(Icons.search),
+            )
+          ),
+        ],
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          RecipeList(_recipes.values.toList()),
+          RecipeList(_recipes.values.toList(), _toggleFavorite),
           LoadingRecipeList(_loadingRecipes, retryLoadingRecipe: _addRecipe),
         ],
       ),
