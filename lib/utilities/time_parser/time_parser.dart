@@ -4,15 +4,15 @@ class TimeParser {
     static int extractDuration(String instruction) {
         final match = Constants.TIME_INTERVAL_REGEX.firstMatch(instruction);
         if (match != null && match.groupCount > 1) {
-            String unit = match.group(3)!;
+            String unit = match.group(4)!;
             int duration = 0;
 
-            if (match.group(1)!.contains('-')) {
-                List<String> range = match.group(1)!.split('-');
+            if (match.group(2)!.contains('-')) {
+                List<String> range = match.group(2)!.split('-');
                 // In the case of "3-4 minutes", we use the maximum value (4 in this case)
                 duration = int.tryParse(range[1]) ?? 0;
             } else {
-                duration = int.tryParse(match.group(1)!) ?? 0;
+                duration = int.tryParse(match.group(2)!) ?? 0;
             }
 
             return getDurationInSeconds(duration, unit);
