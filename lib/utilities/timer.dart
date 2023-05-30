@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class TimerWidget extends StatefulWidget {
   final int duration;
 
-  const TimerWidget({super.key, required this.duration});
+  const TimerWidget({Key? key, required this.duration}) : super(key: key);
 
   @override
   TimerWidgetState createState() => TimerWidgetState();
 }
 
 class TimerWidgetState extends State<TimerWidget> {
-  late Timer _timer;
+  Timer? _timer;
   late int _timeRemaining;
+  bool _isRunning = false;
 
   @override
   void initState() {
@@ -21,9 +23,17 @@ class TimerWidgetState extends State<TimerWidget> {
   }
 
   void startTimer() {
+    if (_isRunning || _timeRemaining == 0) return;
+
+    _isRunning = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timeRemaining < 1) {
         timer.cancel();
+        _isRunning = false;
+        FlutterRingtonePlayer.playAlarm(
+          looping: false,
+          volume: 0.1,
+        );
       } else {
         if (mounted) {
           setState(() {
@@ -35,13 +45,22 @@ class TimerWidgetState extends State<TimerWidget> {
   }
 
   void stopTimer() {
-    _timer.cancel();
+    _timer?.cancel();
+    _isRunning = false;
+    FlutterRingtonePlayer.stop();
   }
 
   void resetTimer() {
     setState(() {
       _timeRemaining = widget.duration;
     });
+    stopTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
