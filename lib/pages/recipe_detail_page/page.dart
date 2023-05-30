@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-
+import '../../styles/theme.dart';
 import '../../models/recipe.dart';
+import '../../../utilities/timer.dart';
+import '../../../utilities/time_parser/time_parser.dart';
 
 import 'components/ingredient_detail.dart';
 import 'components/step_detail.dart';
 import 'components/section_title.dart';
-
-import '../../styles/theme.dart';
 
 class RecipeDetailPage extends StatefulWidget {
   final Recipe recipe;
@@ -20,12 +20,20 @@ class RecipeDetailPage extends StatefulWidget {
 class RecipeDetailPageState extends State<RecipeDetailPage> {
   List<bool> _stepChecklist = [];
   List<bool> _ingredientChecklist = [];
+  final Map<int, List<TimerWidget>> _timerWidgets = {};
 
   @override
   void initState() {
     super.initState();
     _stepChecklist = List<bool>.filled(widget.recipe.steps.length, false);
     _ingredientChecklist = List<bool>.filled(widget.recipe.ingredients.length, false);
+
+    for (int i = 0; i < widget.recipe.steps.length; i++) {
+      List<int> durations = TimeParser.extractDurations(widget.recipe.steps[i].instruction);
+      if (durations.isNotEmpty) {
+        _timerWidgets[i] = durations.map((duration) => TimerWidget(duration: duration)).toList();
+      }
+    }
   }
 
   @override
@@ -83,6 +91,7 @@ class RecipeDetailPageState extends State<RecipeDetailPage> {
               StepDetail(
                 step: widget.recipe.steps[i],
                 isChecked: _stepChecklist[i],
+                timers: _timerWidgets[i] ?? [],  // Pass the list of TimerWidgets to StepDetail
                 onChanged: (bool? value) {
                   setState(() {
                     _stepChecklist[i] = value!;

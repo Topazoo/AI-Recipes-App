@@ -1,23 +1,25 @@
 import 'constants.dart';
 
 class TimeParser {
-    static int extractDuration(String instruction) {
-        final match = RegExp(Constants.TIME_INTERVAL_REGEX, caseSensitive: false).firstMatch(instruction);
-        if (match != null && match.groupCount > 1) {
-            String unit = match.group(3)!;
-            int duration = 0;
+    static List<int> extractDurations(String instruction) {
+        Iterable<RegExpMatch> matches = RegExp(Constants.TIME_INTERVAL_REGEX, caseSensitive: false).allMatches(instruction);
+        List<int> durations = [];
+        for (var match in matches) {
+            if (match.groupCount > 1) {
+                String unit = match.group(3)!;
+                int duration = 0;
 
-            if (match.group(1)!.contains('-')) {
-                List<String> range = match.group(1)!.split('-');
-                // In the case of "3-4 minutes", we use the maximum value (4 in this case)
-                duration = int.tryParse(range[1]) ?? 0;
-            } else {
-                duration = int.tryParse(match.group(1)!) ?? 0;
+                if (match.group(1)!.contains('-')) {
+                    List<String> range = match.group(1)!.split('-');
+                    duration = int.tryParse(range[1]) ?? 0;
+                } else {
+                    duration = int.tryParse(match.group(1)!) ?? 0;
+                }
+
+                durations.add(getDurationInSeconds(duration, unit));
             }
-
-            return getDurationInSeconds(duration, unit);
         }
-        return 0;
+        return durations;
     }
 
     static int getDurationInSeconds(int duration, String unit) {
