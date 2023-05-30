@@ -6,9 +6,11 @@ import '../../utilities/recipe_http_client.dart';
 import '../../models/recipe.dart';
 import '../../models/loading_recipe.dart';
 
-import 'components/add_recipe_dialogue.dart';
+import 'components/add_or_search_recipe.dart';
 import 'components/loading_recipe_list.dart';
 import 'components/recipe_list.dart';
+
+import '../../styles/theme.dart';
 
 class RecipeListPage extends StatefulWidget {
   const RecipeListPage({Key? key, required this.title}) : super(key: key);
@@ -74,8 +76,6 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
       });
   }
 
-
-
   Future<void> _addRecipe(String title) async {
     RecipeHTTPClient httpClient = RecipeHTTPClient(recipeTitle: title);
 
@@ -136,67 +136,55 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
     });
   }
 
-  void _showAddRecipeDialog(BuildContext context) {
-    final TextEditingController textEditingController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AddRecipeDialog(textEditingController, _addRecipe);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: AppTheme.primaryColor, // Adding primary color as AppBar background
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            fontFamily: AppTheme.primaryFont,
+            color: AppTheme.tabColor, // Set the AppBar title color to tab color
+          )
+        ),
+        elevation: 5, 
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: AppTheme.tabColor, 
+          labelColor: AppTheme.tabColor,
+          unselectedLabelColor: AppTheme.unselectedTabColor,
           tabs: const [
             Tab(icon: Icon(Icons.check_box), text: 'Recipes'),
             Tab(icon: Icon(Icons.hourglass_empty), text: 'Loading Recipes'),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Column(children: [
-            GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus(); // Unfocus the search field
-                setState(() {
-                  _searchTerm = _searchController.text;
-                });
-              },
-              child: TextField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                  labelText: "Search",
-                  fillColor: Colors.white,
-                  filled: true,
+      body: Container(
+        color: AppTheme.lightBackgroundColor,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            Column(
+              children: [
+                AddOrSearchRecipe(searchController: _searchController, onAddRecipe: _addRecipe),
+                Flexible(
+                  child: RecipeList(
+                    _searchTerm == ""
+                        ? _recipes.values.toList()
+                        : _recipes.values
+                            .where((recipe) =>
+                                recipe.title.toLowerCase().contains(_searchTerm.toLowerCase()))
+                            .toList(),
+                    _toggleFavorite,
+                  ),
                 ),
-              ),
+              ],
             ),
-            Flexible(child:
-              RecipeList(_searchTerm == "" ? 
-                _recipes.values.toList() : 
-                _recipes.values.where((recipe) => recipe.title.toLowerCase().contains(_searchTerm.toLowerCase())).toList(),
-                _toggleFavorite
-              )
-            ),
-          ]),
-          LoadingRecipeList(_loadingRecipes, retryLoadingRecipe: _addRecipe),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddRecipeDialog(context);
-        },
-        tooltip: 'Add Recipe',
-        child: const Icon(Icons.add),
-      ),
+            LoadingRecipeList(_loadingRecipes, retryLoadingRecipe: _addRecipe),
+          ],
+        ),
+      )
     );
   }
 }

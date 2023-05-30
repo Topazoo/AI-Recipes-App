@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'pages/recipe_list/page.dart';
 
+import 'styles/theme.dart';
+
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
@@ -9,7 +11,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'AI Recipes',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: AppTheme.primarySwatch,
       ),
       home: const RecipeListPage(title: 'AI Recipes'),
     );
