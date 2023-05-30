@@ -6,6 +6,8 @@ import 'components/ingredient_detail.dart';
 import 'components/step_detail.dart';
 import 'components/section_title.dart';
 
+import '../../styles/theme.dart';
+
 class RecipeDetailPage extends StatefulWidget {
   final Recipe recipe;
 
@@ -36,19 +38,35 @@ class RecipeDetailPageState extends State<RecipeDetailPage> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            const SectionTitle('Description:'),
-            Text(widget.recipe.description),
+            const SectionTitle('Description:', icon: Icons.description_outlined),
+            Text(
+              widget.recipe.description,
+              style: TextStyle(color: AppTheme.darkTextColor, fontFamily: AppTheme.primaryFont),
+            ),
+            const Divider(color: Colors.transparent),
+            Text(
+              'Servings: ${widget.recipe.servings}',
+              style: TextStyle(color: AppTheme.darkTextColor, fontFamily: AppTheme.primaryFont),
+            ),
             const Divider(),
-            Text('Servings: ${widget.recipe.servings}'),
+            const SectionTitle('Time:', icon: Icons.timer_outlined),
+            Text(
+              'Preparation time: ${widget.recipe.prepTime}',
+              style: TextStyle(color: AppTheme.darkTextColor, fontFamily: AppTheme.primaryFont),
+              ),
+            const Divider(color: Colors.transparent),
+            Text(
+              'Cooking time: ${widget.recipe.cookTime}',
+              style: TextStyle(color: AppTheme.darkTextColor, fontFamily: AppTheme.primaryFont),
+              ),
             const Divider(),
-            Text('Preparation time: ${widget.recipe.prepTime}'),
+            const SectionTitle('Notes:', icon: Icons.notes),
+            Text(
+              widget.recipe.notes,
+              style: TextStyle(color: AppTheme.darkTextColor, fontFamily: AppTheme.primaryFont),
+            ),
             const Divider(),
-            Text('Cooking time: ${widget.recipe.cookTime}'),
-            const Divider(),
-            const SectionTitle('Notes:'),
-            Text(widget.recipe.notes),
-            const Divider(),
-            const SectionTitle('Ingredients:'),
+            const SectionTitle('Ingredients:', icon: Icons.inventory_2_outlined),
             for (int i = 0; i < widget.recipe.ingredients.length; i++)
               IngredientDetail(
                 ingredient: widget.recipe.ingredients[i], 
@@ -60,7 +78,7 @@ class RecipeDetailPageState extends State<RecipeDetailPage> {
                 },
               ),
             const Divider(),
-            const SectionTitle('Steps:'),
+            const SectionTitle('Steps:', icon: Icons.check),
             for (int i = 0; i < widget.recipe.steps.length; i++)
               StepDetail(
                 step: widget.recipe.steps[i],
