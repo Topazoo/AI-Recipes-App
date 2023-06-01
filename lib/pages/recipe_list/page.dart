@@ -42,9 +42,12 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
       });
     });
 
-    _addRecipe("steak");
-    _addRecipe("vegan chorizo");
-    _addRecipe("apple pie");
+    // Add defaults
+    if (_recipes.isEmpty) {
+      _addRecipe("steak");
+      _addRecipe("vegan chorizo");
+      _addRecipe("apple pie");
+    }
   }
 
   @override
