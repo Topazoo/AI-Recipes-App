@@ -41,6 +41,10 @@ class _RecipeListPageState extends State<RecipeListPage> with SingleTickerProvid
         _searchTerm = _searchController.text;
       });
     });
+
+    _addRecipe("steak");
+    _addRecipe("vegan chorizo");
+    _addRecipe("apple pie");
   }
 
   @override
